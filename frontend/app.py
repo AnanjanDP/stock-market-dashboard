@@ -4,20 +4,16 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 
-# ==============================
-# Environment
-# ==============================
+
 
 load_dotenv()
 API_URL = os.getenv("API_URL")
 
 st.set_page_config(page_title="Stock Analytics Dashboard", layout="wide")
 
-st.title("📊 Stock Analytics Dashboard")
+st.title("Stock Analytics Dashboard")
 
-# ==============================
 # Sidebar
-# ==============================
 
 stock_options = {
     "Apple (AAPL)": "AAPL",
@@ -42,9 +38,8 @@ show_macd = st.sidebar.checkbox("Show MACD", True)
 
 ticker = stock_options[selected_stock]
 
-# ==============================
 # Cached API Call
-# ==============================
+
 
 @st.cache_data
 def fetch_stock(ticker, period):
@@ -57,9 +52,8 @@ if "error" in data:
     st.error(data["error"])
     st.stop()
 
-# ==============================
 # Metric Cards
-# ==============================
+
 
 col1, col2, col3, col4 = st.columns(4)
 
@@ -68,9 +62,7 @@ col2.metric("Daily Change %", f"{data['daily_change']}%")
 col3.metric("52W High", f"${data['high_52w']}")
 col4.metric("52W Low", f"${data['low_52w']}")
 
-# ==============================
 # DataFrame
-# ==============================
 
 df = pd.DataFrame({
     "Date": data["dates"],
@@ -84,24 +76,20 @@ df = pd.DataFrame({
 
 df.set_index("Date", inplace=True)
 
-# ==============================
 # Charts
-# ==============================
 
-st.subheader("📈 Price & Moving Averages")
+
+st.subheader("Price & Moving Averages")
 st.line_chart(df[["Close", "SMA 50", "SMA 200"]])
 
 if show_rsi:
-    st.subheader("📊 RSI Indicator")
+    st.subheader("RSI Indicator")
     st.line_chart(df[["RSI"]])
 
 if show_macd:
-    st.subheader("📉 MACD Indicator")
+    st.subheader("MACD Indicator")
     st.line_chart(df[["MACD", "Signal"]])
 
-# ==============================
-# Download Button
-# ==============================
 
 st.download_button(
     label="Download Data as CSV",
